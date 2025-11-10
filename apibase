@@ -1,0 +1,24 @@
+import axios from 'axios';
+const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
+
+const instance = axios.create({ baseURL: BASE, headers: { 'Content-Type':'application/json' }});
+instance.interceptors.request.use(cfg => {
+  const token = localStorage.getItem('token');
+  if (token) cfg.headers.Authorization = `Bearer ${token}`;
+  return cfg;
+});
+
+export default {
+  auth: {
+    register: (p) => instance.post('/auth/register', p),
+    login: (p) => instance.post('/auth/login', p)
+  },
+  courses: {
+    list: () => instance.get('/courses'),
+    create: (p) => instance.post('/courses', p)
+  },
+  internships: {
+    list: () => instance.get('/internships'),
+    apply: (p) => instance.post('/internships/apply', p)
+  }
+};
